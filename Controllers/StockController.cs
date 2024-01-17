@@ -11,12 +11,10 @@ namespace finshark.Controllers;
 [ApiController]
 public class StockController : ControllerBase
 {
-    private readonly ApiDbContext _dbContext;
     private readonly IStockRepository _repository;
     
-    public StockController(ApiDbContext dbContext, IStockRepository repository)
+    public StockController(IStockRepository repository)
     {
-        _dbContext = dbContext;
         _repository = repository;
     }
 
@@ -31,7 +29,7 @@ public class StockController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var stock = await _dbContext.Stocks.FindAsync(id);
+        var stock = await _repository.GetByIdAsync(id);
 
         if (stock == null)
         {
@@ -45,9 +43,8 @@ public class StockController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateStockRequestDTO stockDTO)
     {
         var stock = stockDTO.ToStockFromCreateDTO();
-        
-        await _dbContext.Stocks.AddAsync(stock);
-        await _dbContext.SaveChangesAsync();
+
+        await _repository.CreateAsync(stock);
 
         return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock);
     }
@@ -55,21 +52,12 @@ public class StockController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDTO stockDTO)
     {
-        var stock = await _dbContext.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+        var stock = await _repository.UpdateAsync(id, stockDTO);
 
         if (stock == null)
         {
             return NotFound();
         }
-
-        stock.Company = stockDTO.Company;
-        stock.Symbol = stockDTO.Symbol;
-        stock.Industry = stock.Industry;
-        stock.LastDiv = stockDTO.LastDiv;
-        stock.MarketCap = stockDTO.MarketCap;
-        stock.Purchase = stockDTO.Purchase;
-
-        await _dbContext.SaveChangesAsync();
 
         return Ok(stock);
     }
@@ -77,15 +65,12 @@ public class StockController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var stock = await _dbContext.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+        var stock = await _repository.DeleteAsync(id);
 
         if (stock == null)
         {
             return NotFound();
         }
-
-        _dbContext.Stocks.Remove(stock);
-        await _dbContext.SaveChangesAsync();
 
         return NoContent();
     }
