@@ -24,7 +24,7 @@ public class StockController : ControllerBase
         return Ok(stocks);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById([FromRoute] int id)
     {
         var stock = _dbContext.Stocks.Find(id);
@@ -48,7 +48,7 @@ public class StockController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock);
     }
 
-    [HttpPut]
+    [HttpPut("{id:int}")]
     public IActionResult Update([FromRoute] int id, [FromBody] UpdateStockRequestDTO stockDTO)
     {
         var stock = _dbContext.Stocks.FirstOrDefault(s => s.Id == id);
@@ -68,5 +68,21 @@ public class StockController : ControllerBase
         _dbContext.SaveChanges();
 
         return Ok(stock);
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete([FromRoute] int id)
+    {
+        var stock = _dbContext.Stocks.FirstOrDefault(s => s.Id == id);
+
+        if (stock == null)
+        {
+            return NotFound();
+        }
+
+        _dbContext.Stocks.Remove(stock);
+        _dbContext.SaveChanges();
+
+        return NoContent();
     }
 }
