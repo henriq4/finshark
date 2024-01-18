@@ -1,9 +1,7 @@
-using finshark.Data;
 using finshark.DTOs.Stock;
 using finshark.Interfaces;
 using finshark.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace finshark.Controllers;
 

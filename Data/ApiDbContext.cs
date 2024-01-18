@@ -11,5 +11,5 @@ public class ApiDbContext: DbContext
     }
     
     public DbSet<Stock> Stocks { get; set; }
-    public DbSet<Comments> Comments { get; set; }
+    public DbSet<Comment> Comments { get; set; }
 }
