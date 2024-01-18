@@ -25,9 +25,24 @@ public class CommentRepository : ICommentRepository
         return await _dbContext.Comments.FindAsync(id);
     }
 
-    public async Task<Comment> Create(Comment comment)
+    public async Task<Comment> CreateAsync(Comment comment)
     {
         await _dbContext.Comments.AddAsync(comment);
+        await _dbContext.SaveChangesAsync();
+
+        return comment;
+    }
+
+    public async Task<Comment?> DeleteAsync(int id)
+    {
+        var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (comment == null)
+        {
+            return null;
+        }
+
+        _dbContext.Comments.Remove(comment);
         await _dbContext.SaveChangesAsync();
 
         return comment;
