@@ -9,17 +9,17 @@ namespace finshark.Controllers;
 [ApiController]
 public class StockController : ControllerBase
 {
-    private readonly IStockRepository _repository;
+    private readonly IStockRepository _stockRepository;
     
-    public StockController(IStockRepository repository)
+    public StockController(IStockRepository stockRepository)
     {
-        _repository = repository;
+        _stockRepository = stockRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var stocks = await _repository.GetAllAsync();
+        var stocks = await _stockRepository.GetAllAsync();
 
         return Ok(stocks);
     }
@@ -27,7 +27,7 @@ public class StockController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var stock = await _repository.GetByIdAsync(id);
+        var stock = await _stockRepository.GetByIdAsync(id);
 
         if (stock == null)
         {
@@ -42,7 +42,7 @@ public class StockController : ControllerBase
     {
         var stock = stockDTO.ToStockFromCreateDTO();
 
-        await _repository.CreateAsync(stock);
+        await _stockRepository.CreateAsync(stock);
 
         return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock);
     }
@@ -50,7 +50,7 @@ public class StockController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDTO stockDTO)
     {
-        var stock = await _repository.UpdateAsync(id, stockDTO);
+        var stock = await _stockRepository.UpdateAsync(id, stockDTO);
 
         if (stock == null)
         {
@@ -63,7 +63,7 @@ public class StockController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var stock = await _repository.DeleteAsync(id);
+        var stock = await _stockRepository.DeleteAsync(id);
 
         if (stock == null)
         {

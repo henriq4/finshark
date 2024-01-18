@@ -1,3 +1,4 @@
+using finshark.DTOs.Comment;
 using finshark.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,17 +8,17 @@ namespace finshark.Controllers;
 [ApiController]
 public class CommentController : ControllerBase
 {
-    private readonly ICommentRepository _repository;
+    private readonly ICommentRepository _commentRepository;
     
-    public CommentController(ICommentRepository repository)
+    public CommentController(ICommentRepository commentRepository)
     {
-        _repository = repository;
+        _commentRepository = commentRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var comments = await _repository.GetAllAsync();
+        var comments = await _commentRepository.GetAllAsync();
 
         return Ok(comments);
     }
@@ -26,7 +27,7 @@ public class CommentController : ControllerBase
     [Route("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var comment = await _repository.GetByIdAsync(id);
+        var comment = await _commentRepository.GetByIdAsync(id);
 
         if (comment == null)
         {
@@ -34,5 +35,11 @@ public class CommentController : ControllerBase
         }
 
         return Ok(comment);
+    }
+
+    [HttpPost("{stockId:int}")]
+    public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentRequestDTO commentDTO)
+    {
+        return Ok();
     }
 }
