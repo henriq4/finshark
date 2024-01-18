@@ -1,5 +1,6 @@
 using finshark.DTOs.Comment;
 using finshark.Interfaces;
+using finshark.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace finshark.Controllers;
@@ -9,10 +10,12 @@ namespace finshark.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly ICommentRepository _commentRepository;
+    private readonly IStockRepository _stockRepository;
     
-    public CommentController(ICommentRepository commentRepository)
+    public CommentController(ICommentRepository commentRepository, IStockRepository stockRepository)
     {
         _commentRepository = commentRepository;
+        _stockRepository = stockRepository;
     }
 
     [HttpGet]
@@ -40,6 +43,15 @@ public class CommentController : ControllerBase
     [HttpPost("{stockId:int}")]
     public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentRequestDTO commentDTO)
     {
-        return Ok();
+        if (!await _stockRepository.ExistingStock(stockId))
+        {
+            return BadRequest("Stock does not exist");
+        }
+
+        var comment = commentDTO.ToCommentFromCreateCommentDTO(stockId);
+        
+        await _commentRepository.Create(comment);
+
+        return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment);
     }
 }
