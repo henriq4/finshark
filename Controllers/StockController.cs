@@ -1,4 +1,5 @@
 using finshark.DTOs.Stock;
+using finshark.Helpers;
 using finshark.Interfaces;
 using finshark.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ public class StockController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
     {
-        var stocks = await _stockRepository.GetAllAsync();
+        var stocks = await _stockRepository.GetAllAsync(query);
 
         return Ok(stocks);
     }
