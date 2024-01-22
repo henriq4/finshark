@@ -55,6 +55,19 @@ public class CommentController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = comment.Id }, comment);
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDTO commentDTO)
+    {
+        var comment = await _commentRepository.UpdateAsync(id, commentDTO.ToCommentFromCreateCommentDTO(id));
+
+        if (comment == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(comment);
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
