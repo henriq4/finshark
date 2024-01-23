@@ -43,6 +43,8 @@ public class CommentController : ControllerBase
     [HttpPost("{stockId:int}")]
     public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentRequestDTO commentDTO)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         if (!await _stockRepository.ExistingStock(stockId))
         {
             return BadRequest("Stock does not exist");
@@ -58,6 +60,8 @@ public class CommentController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentRequestDTO commentDTO)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var comment = await _commentRepository.UpdateAsync(id, commentDTO.ToCommentFromCreateCommentDTO(id));
 
         if (comment == null)
@@ -71,6 +75,8 @@ public class CommentController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var comment = await _commentRepository.DeleteAsync(id);
 
         if (comment == null)

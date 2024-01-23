@@ -41,6 +41,8 @@ public class StockController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateStockRequestDTO stockDTO)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var stock = stockDTO.ToStockFromCreateDTO();
 
         await _stockRepository.CreateAsync(stock);
@@ -51,6 +53,8 @@ public class StockController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDTO stockDTO)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var stock = await _stockRepository.UpdateAsync(id, stockDTO);
 
         if (stock == null)
@@ -64,6 +68,8 @@ public class StockController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var stock = await _stockRepository.DeleteAsync(id);
 
         if (stock == null)
