@@ -57,8 +57,8 @@ public class StockRepository : IStockRepository
         
          stock.Company = stockDTO.Company;
          stock.Symbol = stockDTO.Symbol;
-         stock.Industry = stock.Industry;
          stock.LastDiv = stockDTO.LastDiv;
+         stock.Industry = stockDTO.Industry;
          stock.MarketCap = stockDTO.MarketCap;
          stock.Purchase = stockDTO.Purchase;
 
