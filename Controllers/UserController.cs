@@ -1,4 +1,5 @@
 using finshark.DTOs.User;
+using finshark.Interfaces;
 using finshark.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace finshark.Controllers;
 public class UserController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
+    private readonly ITokenService _tokenService;
 
-    public UserController(UserManager<User> userManager)
+    public UserController(UserManager<User> userManager, ITokenService tokenService)
     {
         this._userManager = userManager;
+        _tokenService = tokenService;
     }
 
     [HttpPost]
@@ -37,7 +40,12 @@ public class UserController : ControllerBase
 
             if (!roleUser.Succeeded) return BadRequest(roleUser.Errors);
 
-            return Ok();
+            return Ok(new CreateUserResponseDTO
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user)
+            });
         }
         catch (Exception e)
         {
